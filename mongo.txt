@@ -1,0 +1,9 @@
+username:sai
+password:sai1919
+
+
+
+python -m venv venv
+venv\Scripts\activate
+
+mongodb+srv://<db_username>:<db_password>@cluster0.sy8yc5v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

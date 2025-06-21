@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SecureVault Access</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #fdfcff, #e8f6ff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .flip-card {
+      background-color: transparent;
+      width: 360px;
+      height: 420px;
+      perspective: 1000px;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s ease;
+      transform-style: preserve-3d;
+    }
+
+    .flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      backface-visibility: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+    }
+
+    .flip-card-front {
+      background: #ffffff;
+    }
+
+    .flip-card-back {
+      background: #f0faff;
+      transform: rotateY(180deg);
+      color: #0072ff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .brand-name {
+      font-size: 24px;
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 30px;
+    }
+
+    .icon-glow {
+      font-size: 48px;
+      color: #007bff;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        text-shadow: 0 0 8px #a5d8ff;
+      }
+      50% {
+        text-shadow: 0 0 15px #007bff;
+      }
+    }
+
+    .form-floating .form-control {
+      border-radius: 12px;
+      background-color: #f0faff;
+      border: 1px solid #cce0ff;
+    }
+
+    .form-floating label {
+      color: #777;
+    }
+
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #007bff;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .btn-custom {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      border: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 12px;
+      padding: 10px;
+      width: 100%;
+      transition: 0.3s ease;
+    }
+
+    .btn-custom:hover {
+      box-shadow: 0 0 15px rgba(0, 114, 255, 0.4);
+      transform: scale(1.04);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 12px;
+      width: 100%;
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+    }
+
+    .alert {
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="flip-card" id="cardBox">
+    <div class="flip-card-inner {% with messages = get_flashed_messages() %}{% if not messages %}flipped{% endif %}{% endwith %}">
+      
+      <!-- Front Side -->
+      <div class="flip-card-front">
+        <div class="icon-glow">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="brand-name">🔐 SecureVault</div>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="alert alert-danger" role="alert">
+              {{ messages[0] }}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form id="vaultForm" action="{{ url_for('login') }}" method="POST">
+          <div class="form-floating mb-3 form-group">
+            <input type="password" class="form-control" id="vaultPassword" name="vault_password" placeholder="Vault Password" required>
+            <label for="vaultPassword">Enter Vault Password</label>
+            <i class="fa fa-eye toggle-password" onclick="togglePassword()"></i>
+          </div>
+          <button type="submit" class="btn btn-custom mt-2">
+            <i class="fas fa-lock-open"></i> Access Vault
+          </button>
+        </form>
+      </div>
+
+      <!-- Back Side -->
+      <div class="flip-card-back">
+        <h3>✅ Welcome to SecureVault!</h3>
+        <p>Thank you for visiting.<br>Stay safe and secure 🔐</p>
+        <i class="fas fa-thumbs-up fa-2x mt-3"></i>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>&copy; 2025 SecureVault. All rights reserved.</footer>
+
+  <script>
+    function togglePassword() {
+      const passInput = document.getElementById('vaultPassword');
+      const toggleIcon = document.querySelector('.toggle-password');
+      if (passInput.type === "password") {
+        passInput.type = "text";
+        toggleIcon.classList.remove("fa-eye");
+        toggleIcon.classList.add("fa-eye-slash");
+      } else {
+        passInput.type = "password";
+        toggleIcon.classList.remove("fa-eye-slash");
+        toggleIcon.classList.add("fa-eye");
+      }
+    }
+  </script>
+
+</body>
+</html>

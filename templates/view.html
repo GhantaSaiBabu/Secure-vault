@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your SecureVault</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(to right, #eef2f3, #dff9fb);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .vault-container {
+      margin-top: 90px;
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .vault-title {
+      color: #0077b6;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    pre {
+      background-color: #f1f3f5;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .btn-custom {
+      font-weight: 500;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-custom i {
+      margin-right: 6px;
+    }
+
+    .btn-edit {
+      background-color: #f39c12;
+      color: #fff;
+    }
+
+    .btn-edit:hover {
+      background-color: #e67e22;
+    }
+
+    .btn-delete {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background-color: #c0392b;
+    }
+
+    .btn-update {
+      background-color: #38ada9;
+      color: white;
+    }
+
+    .btn-update:hover {
+      background-color: #218c74;
+    }
+
+    .navbar-custom {
+      background: linear-gradient(to right, #0077b6, #00b4d8);
+      padding: 10px 20px;
+    }
+
+    .navbar .btn {
+      margin-right: 10px;
+    }
+
+    .home-btn {
+      background-color: #1abc9c;
+      color: white;
+    }
+
+    .home-btn:hover {
+      background-color: #16a085;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+  <div class="container-fluid justify-content-end">
+    <button class="btn btn-edit btn-custom btn-sm" onclick="toggleEdit()" title="Edit Notes">
+      <i class="fas fa-pen"></i> Edit Notes
+    </button>
+    <form action="/delete_note" method="POST" class="d-inline">
+      <input type="hidden" name="pin" value="{{ pin }}">
+      <button type="submit" class="btn btn-delete btn-custom btn-sm" title="Delete Notes" onclick="return confirm('Are you sure you want to delete the notes?')">
+        <i class="fas fa-trash"></i> Delete Notes
+      </button>
+    </form>
+    <a href="/" class="btn home-btn btn-custom btn-sm" title="Go to Home">
+      <i class="fas fa-home"></i> Home
+    </a>
+  </div>
+</nav>
+
+<div class="container vault-container">
+
+  <!-- Vault Title -->
+  <h2 class="vault-title">🔐 Vault for PIN: {{ pin }}</h2>
+
+  <!-- Uploaded Files -->
+  <h4>📂 Uploaded Files</h4>
+  <ul class="list-group mb-4">
+    {% for file in files %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ file }}
+        <div>
+          <a href="/download/{{ file }}" class="btn btn-outline-primary btn-sm me-2">
+            <i class="fas fa-download"></i> Download
+          </a>
+          <a href="/delete_file/{{ file }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this file?')">
+            <i class="fas fa-trash"></i> Delete
+          </a>
+        </div>
+      </li>
+    {% endfor %}
+    {% if files|length == 0 %}
+      <li class="list-group-item text-muted">No files found.</li>
+    {% endif %}
+  </ul>
+
+  <!-- Notes Section -->
+  <h4>📝 Notes</h4>
+  {% if code %}
+    <div id="note-display">
+      <pre>{{ code }}</pre>
+    </div>
+
+    <!-- Hidden Update Form -->
+    <form id="note-edit-form" action="/update_note" method="POST" style="display: none;">
+      <input type="hidden" name="pin" value="{{ pin }}">
+      <div class="mb-3">
+        <textarea name="updated_code" class="form-control" rows="6">{{ code }}</textarea>
+      </div>
+      <button type="submit" class="btn btn-update btn-custom me-2">
+        <i class="fas fa-check-circle"></i> Update Notes
+      </button>
+      <button type="button" class="btn btn-secondary btn-custom" onclick="cancelEdit()">
+        <i class="fas fa-times-circle"></i> Cancel
+      </button>
+    </form>
+  {% else %}
+    <p class="text-muted">No notes stored in this vault.</p>
+  {% endif %}
+</div>
+
+<script>
+  function toggleEdit() {
+    document.getElementById('note-display').style.display = 'none';
+    document.getElementById('note-edit-form').style.display = 'block';
+  }
+
+  function cancelEdit() {
+    document.getElementById('note-edit-form').style.display = 'none';
+    document.getElementById('note-display').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
